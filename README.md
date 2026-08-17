@@ -1,6 +1,6 @@
 # Playcatch
 
-![Status](https://img.shields.io/badge/status-em%20finalizacao-yellow)
+![Status](https://img.shields.io/badge/status-%20finalizado-green)
 ![Python](https://img.shields.io/badge/python-3.12.3-blue)
 ![Tests](https://img.shields.io/badge/tests-93%20passing-brightgreen)
 ![Ruff](https://img.shields.io/badge/lint-ruff-informational)
@@ -20,7 +20,7 @@ M1 — Análise de Sentimentos das Letras   ✅
 M2 — Recomendação de Músicas             ✅
 M3 — Chatbot                             ✅
 M4 — Integração e Testes Finais          ✅
-M5 — Encerramento / Entrega              🔄
+M5 — Encerramento / Entrega              ✅
 ```
 
 ## Sobre o projeto
