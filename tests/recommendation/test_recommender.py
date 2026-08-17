@@ -1,7 +1,8 @@
 import pandas as pd
 import pytest
 
-from src.recommendation.recommender import MusicRecommender
+from src.recommendation.feedback import FeedbackTracker
+from src.recommendation.recommender import LIKED_BOOST, MusicRecommender
 
 
 @pytest.fixture
@@ -14,7 +15,7 @@ def sample_data():
             "language": ["en", "en", "de", "fr"],
             "lyrics": ["Lyrics A", "Lyrics B", "Lyrics C", "Lyrics D"],
             "emotion": ["joy", "joy", "sadness", "anger"],
-            "score": [0.95, 0.80, 0.90, 0.85],
+            "score": [0.85, 0.80, 0.90, 0.85],
         }
     )
 
@@ -34,7 +35,7 @@ def test_recommend_orders_by_score(sample_data):
     result = recommender.recommend("joy")
 
     assert result.iloc[0]["title"] == "Song A"
-    assert result.iloc[0]["score"] == 0.95
+    assert result.iloc[0]["score"] == 0.85
 
 
 def test_recommend_respects_limit(sample_data):
@@ -76,3 +77,85 @@ def test_recommend_rejects_empty_emotion(sample_data):
         match="sentimento não pode estar vazio",
     ):
         recommender.recommend("   ")
+
+
+def test_skipped_song_is_excluded(sample_data):
+    tracker = FeedbackTracker()
+    skipped = tracker.skipped("1")
+
+    recommender = MusicRecommender(
+        sample_data,
+        feedback=[skipped],
+    )
+
+    result = recommender.recommend("joy")
+
+    assert "1" not in result["song_id"].tolist()
+    assert "2" in result["song_id"].tolist()
+
+
+def test_liked_song_receives_score_boost(sample_data):
+    tracker = FeedbackTracker()
+    liked = tracker.liked("2")
+
+    recommender = MusicRecommender(
+        sample_data,
+        feedback=[liked],
+    )
+
+    result = recommender.recommend("joy")
+
+    liked_row = result[result["song_id"] == "2"].iloc[0]
+
+    assert liked_row["adjusted_score"] == min(
+        liked_row["score"] + LIKED_BOOST,
+        1.0,
+    )
+
+
+def test_liked_song_can_move_up_in_ranking(sample_data):
+    tracker = FeedbackTracker()
+    liked = tracker.liked("2")
+
+    recommender = MusicRecommender(
+        sample_data,
+        feedback=[liked],
+    )
+
+    result = recommender.recommend("joy")
+
+    assert result.iloc[0]["song_id"] == "2"
+
+
+def test_score_is_capped_at_one(sample_data):
+    data = sample_data.copy()
+    data.loc[data["song_id"] == "2", "score"] = 0.95
+
+    tracker = FeedbackTracker()
+    liked = tracker.liked("2")
+
+    recommender = MusicRecommender(
+        data,
+        feedback=[liked],
+    )
+
+    result = recommender.recommend("joy")
+
+    liked_row = result[result["song_id"] == "2"].iloc[0]
+
+    assert liked_row["adjusted_score"] == 1.0
+
+
+def test_latest_feedback_overrides_previous_feedback(sample_data):
+    tracker = FeedbackTracker()
+    tracker.skipped("1")
+    tracker.liked("1")
+
+    recommender = MusicRecommender(
+        sample_data,
+        feedback=tracker.get_all(),
+    )
+
+    result = recommender.recommend("joy")
+
+    assert "1" in result["song_id"].tolist()
