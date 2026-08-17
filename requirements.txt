@@ -3,3 +3,4 @@ transformers
 gradio
 datasets
 huggingface_hub
+pytest==9.1.1
