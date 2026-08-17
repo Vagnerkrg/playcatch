@@ -1,5 +1,13 @@
 # Playcatch
 
+![Status](https://img.shields.io/badge/status-em%20finalizacao-yellow)
+![Python](https://img.shields.io/badge/python-3.12.3-blue)
+![Tests](https://img.shields.io/badge/tests-93%20passing-brightgreen)
+![Ruff](https://img.shields.io/badge/lint-ruff-informational)
+![Gradio](https://img.shields.io/badge/UI-Gradio-orange)
+![PyTorch](https://img.shields.io/badge/PyTorch-CUDA-red)
+![Transformers](https://img.shields.io/badge/Hugging%20Face-Transformers-yellow)
+
 Plataforma de recomendação musical baseada em análise de sentimentos das letras, interação por linguagem natural, contexto simples de conversa e feedback do usuário.
 
 ## Status
