@@ -3,6 +3,18 @@ import re
 import pandas as pd
 
 
+LANGUAGE_MAP = {
+    "English": "en",
+    "French": "fr",
+    "German": "de",
+    "Spanish": "es",
+    "en": "en",
+    "fr": "fr",
+    "de": "de",
+    "es": "es",
+}
+
+
 def clean_lyrics(text: str) -> str:
     """Limpa e normaliza uma letra sem alterar seu conteúdo semântico."""
     if not isinstance(text, str):
@@ -30,6 +42,11 @@ def clean_lyrics_dataframe(df: pd.DataFrame) -> pd.DataFrame:
     missing = [column for column in required_columns if column not in result]
     if missing:
         raise ValueError(f"Colunas obrigatórias ausentes: {missing}")
+
+    result["language"] = result["language"].map(LANGUAGE_MAP)
+
+    if result["language"].isna().any():
+        raise ValueError("Idioma não reconhecido no dataset.")
 
     result["lyrics"] = result["lyrics"].fillna("").map(clean_lyrics)
 
