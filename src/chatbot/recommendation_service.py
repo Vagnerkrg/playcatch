@@ -8,15 +8,24 @@ from src.recommendation.recommender import MusicRecommender
 
 
 FOLLOW_UP_PATTERNS = (
-    r"\bmais\b",
-    r"\bmais parecidas?\b",
-    r"\bmais musicas\b",
-    r"\bmais músicas\b",
-    r"\boutras\b",
-    r"\boutras parecidas?\b",
-    r"\boutras musicas\b",
-    r"\boutras músicas\b",
-    r"\bparecidas?\b",
+    r"^(mais)$",
+    r"^(quero|me de|me dê) mais$",
+    r"^(mais parecidas?)$",
+    r"^(quero|me de|me dê) mais parecidas?$",
+    r"^(outras)$",
+    r"^(quero|me de|me dê) outras$",
+    r"^(outras parecidas?)$",
+    r"^(quero|me de|me dê) outras parecidas?$",
+    r"^(mais musicas)$",
+    r"^(mais músicas)$",
+    r"^(quero|me de|me dê) mais musicas$",
+    r"^(quero|me de|me dê) mais músicas$",
+    r"^(outras musicas)$",
+    r"^(outras músicas)$",
+    r"^(quero|me de|me dê) outras musicas$",
+    r"^(quero|me de|me dê) outras músicas$",
+    r"^(parecidas?)$",
+    r"^(quero|me de|me dê) parecidas?$",
 )
 
 
@@ -63,10 +72,10 @@ class ChatbotRecommendationService:
 
     @staticmethod
     def _is_follow_up_query(query: str) -> bool:
-        """Identifica consultas que dependem do contexto anterior."""
+        """Identifica consultas explícitas de continuidade."""
         normalized = " ".join(query.lower().split())
 
-        return any(re.search(pattern, normalized) for pattern in FOLLOW_UP_PATTERNS)
+        return any(re.fullmatch(pattern, normalized) for pattern in FOLLOW_UP_PATTERNS)
 
     @staticmethod
     def _format_response(
