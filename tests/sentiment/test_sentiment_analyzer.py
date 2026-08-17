@@ -5,7 +5,7 @@ from src.sentiment.sentiment_analyzer import SentimentAnalyzer
 
 def test_analyze_returns_emotion_and_score(monkeypatch):
     def fake_pipeline(*args, **kwargs):
-        def classifier(text):
+        def classifier(text, **kwargs):
             return [{"label": "joy", "score": 0.95}]
 
         return classifier
@@ -25,7 +25,7 @@ def test_analyze_returns_emotion_and_score(monkeypatch):
 
 def test_analyze_rejects_empty_text(monkeypatch):
     def fake_pipeline(*args, **kwargs):
-        return lambda text: [{"label": "joy", "score": 0.95}]
+        return lambda text, **kwargs: [{"label": "joy", "score": 0.95}]
 
     monkeypatch.setattr(
         "src.sentiment.sentiment_analyzer.pipeline",
@@ -34,5 +34,8 @@ def test_analyze_rejects_empty_text(monkeypatch):
 
     analyzer = SentimentAnalyzer()
 
-    with pytest.raises(ValueError, match="texto para análise não pode estar vazio"):
+    with pytest.raises(
+        ValueError,
+        match="texto para análise não pode estar vazio",
+    ):
         analyzer.analyze("   ")
