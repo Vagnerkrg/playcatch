@@ -1,6 +1,6 @@
 # Playcatch
 
-![Status](https://img.shields.io/badge/status-%20finalizado-green)
+![Status](https://img.shields.io/badge/status-conclu%C3%ADdo-brightgreen)
 ![Python](https://img.shields.io/badge/python-3.12.3-blue)
 ![Tests](https://img.shields.io/badge/tests-93%20passing-brightgreen)
 ![Ruff](https://img.shields.io/badge/lint-ruff-informational)
@@ -10,9 +10,9 @@
 
 Plataforma de recomendação musical baseada em análise de sentimentos das letras, interação por linguagem natural, contexto simples de conversa e feedback do usuário.
 
-## Status
+## Status: ✅ Projeto concluído
 
-O núcleo funcional do projeto está implementado e validado; o projeto encontra-se na fase final de documentação e entrega.
+O Playcatch foi finalizado, documentado e publicado no GitHub, incluindo documentação da arquitetura, evidências visuais, integração dos componentes e consolidação dos principais aprendizados.
 
 ```text
 M0 — Project Foundation                  ✅
@@ -23,9 +23,33 @@ M4 — Integração e Testes Finais          ✅
 M5 — Encerramento / Entrega              ✅
 ```
 
+Repositório: [`Vagnerkrg/playcatch`](https://github.com/Vagnerkrg/playcatch)
+
 ## Sobre o projeto
 
 O Playcatch é uma plataforma de recomendação musical baseada em análise de sentimentos das letras, interação por linguagem natural, contexto simples de conversa e feedback do usuário. O usuário descreve, em linguagem natural, o tipo de música que quer ouvir, e o sistema identifica o sentimento associado à consulta, recomenda músicas compatíveis a partir de um dataset previamente analisado e ajusta futuras recomendações com base no feedback do usuário.
+
+## Como o sistema funciona
+
+De forma resumida, o fluxo do Playcatch é:
+
+```text
+Entrada / interação do usuário
+        ↓
+Interpretação da consulta (QueryInterpreter)
+        ↓
+Sentimento identificado (Intent + Emotion)
+        ↓
+Sistema de recomendação (MusicRecommender, usando o dataset de sentimentos da M1)
+        ↓
+Resposta formatada
+        ↓
+Resultado apresentado na interface Gradio
+```
+
+A análise de sentimentos (Milestone 1) é o que torna a recomendação possível: cada música do dataset já possui uma emoção (`anger`, `fear`, `joy`, `sadness`) e um score associados, previamente calculados pelo pipeline de sentimento. O chatbot não recalcula sentimento de músicas — ele interpreta a *intenção do usuário* e traduz essa intenção para uma das emoções já existentes no dataset, permitindo ao `MusicRecommender` filtrar as músicas compatíveis.
+
+O papel do chatbot, portanto, é ser uma camada de interpretação e orquestração em linguagem natural sobre o mecanismo de recomendação — ele não decide sozinho quais músicas recomendar; essa lógica permanece no `MusicRecommender`.
 
 ## Funcionalidades
 
@@ -378,6 +402,16 @@ Esses tempos refletem o resultado do ambiente de validação utilizado e não co
 - não existe infraestrutura de produção configurada para o projeto;
 - o dataset textual está sujeito a questões de licenciamento por faixa, ainda pendentes de análise completa.
 
+## Aprendizados
+
+Alguns dos principais aprendizados obtidos ao longo da construção do Playcatch:
+
+- **Integrar componentes independentes é diferente de construí-los isoladamente.** Cada módulo (análise de sentimento, recomendação, chatbot) foi desenvolvido e validado separadamente, mas conectá-los em um fluxo único (`PlaycatchApp` → `ChatbotRecommendationService` → demais componentes) exigiu revisitar contratos de dados e ajustar pontos de integração que não apareciam nos testes isolados.
+- **Sinais de sentimento como base para recomendação.** Usar `emotion` + `score`, já calculados na Milestone 1, como critério de filtragem para o `MusicRecommender` mostrou como uma análise de sentimento relativamente simples pode sustentar uma camada de recomendação inteira, desde que o contrato entre as duas etapas seja bem definido.
+- **O chatbot como camada de tradução, não de decisão.** Manter o `QueryInterpreter` responsável apenas por transformar linguagem natural em `intent` + `emotion` — sem duplicar a lógica de recomendação — se mostrou uma separação de responsabilidades útil tanto para testabilidade quanto para manutenção do sistema.
+- **A importância dos testes de integração.** Os testes unitários de cada componente não garantiam, por si só, que o fluxo ponta a ponta funcionasse; os testes de integração e a validação de usabilidade (Issue #26) foram o que efetivamente confirmou que interpretação, contexto de conversa e recomendação funcionavam juntos de forma consistente.
+- **Separar o que é validado tecnicamente do que é validado cientificamente.** O projeto reforçou a importância de documentar claramente que "o pipeline funciona" e "o modelo está correto para o domínio" são afirmações diferentes — o Playcatch confirma a primeira, mas não afirma a segunda para letras musicais.
+
 ## Documentação adicional
 
 - [`docs/architecture/chatbot-architecture-decision.md`](docs/architecture/chatbot-architecture-decision.md) — decisão arquitetural do chatbot
@@ -392,7 +426,7 @@ M1 — Sentimento                  ✅
 M2 — Recomendação                ✅
 M3 — Chatbot                     ✅
 M4 — Integração                  ✅
-M5 — Encerramento / Entrega      🔄
+M5 — Encerramento / Entrega      ✅
 ```
 
 ## Autor
