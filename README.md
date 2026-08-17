@@ -57,6 +57,16 @@ OVERLAP_TOKENS = 64
 
 Esses parâmetros refletem a configuração atual do pipeline, não uma configuração universal.
 
+## 🖼️ Demonstração
+
+### Interface e recomendação por sentimento
+
+A interface do Playcatch permite realizar consultas em linguagem natural e obter recomendações musicais baseadas no sentimento identificado.
+
+![Interface principal e recomendação por sentimento](docs/screenshots/interface-recommendation-joy.png)
+
+No exemplo acima, a consulta `Quero músicas felizes` foi interpretada como `joy`, e o sistema retornou cinco recomendações ordenadas pelo score.
+
 ### Recomendação
 
 O `MusicRecommender` é responsável por:
